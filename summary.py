@@ -10,6 +10,7 @@ parser = argparse.ArgumentParser("INFO 529 Midterm head")
 parser.add_argument('-o', '--others', action="store", required=True, help="Others")
 parser.add_argument('-w', '--weather', action="store", required=True, help="Weather")
 parser.add_argument('-y', '--yield', action="store", required=True, help="Yield", dest="yld")
+parser.add_argument('-g', '--genotype', action="store", required=True, help="Genotype Mapping")
 
 arguments = parser.parse_args()
 
@@ -26,6 +27,7 @@ def load(name: str) -> np.ndarray:
 o = np.load(arguments.others)
 w = np.load(arguments.weather)
 y = np.load(arguments.yld)
+g = np.load(arguments.genotype)
 
 if (o is None or w is None or y is None):
     print("Failed to load data")
@@ -36,6 +38,7 @@ GENOTYPE = "Genotype"
 STATE = "State"
 YEAR = "Year"
 LOCATION = "Location"
+CLUSTER = "Cluster"
 
 WEATHER_ADNI = "ADNI"
 WEATHER_AP = "AP"
@@ -62,6 +65,19 @@ weather = pd.DataFrame({WEATHER_ADNI: [w[:,0]],
 
 yld = pd.DataFrame({})
 
+print("Number of unique genotypes: {}".format(others.Genotype.nunique()))
+print("Size of genotype mapping data: {}".format(len(g)))
+
+def genotypeCluster(genotype: int) -> int:
+    return(g[int(genotype) - 1])
+
+def enrich_data(others: pd.DataFrame, genotypeMapping: np.ndarray) -> pd.DataFrame:
+    others.insert(2, CLUSTER, 0)
+    others[CLUSTER] = others.apply(lambda x: genotypeCluster(x[GENOTYPE]), axis=1)
+    #self.worksheet_for_eto[self.DOG] = self.worksheet_for_eto.apply(lambda row: self.__day_of_growth(row['DOY']), axis=1)
+    return others
+
+others = enrich_data(others, g)
 
 states = others.groupby(by=STATE)
 #print("State counts\n{}".format(states.count()))
