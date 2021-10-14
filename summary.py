@@ -55,13 +55,13 @@ others = pd.DataFrame({MATURITY: o[:,0].astype(float),
                        YEAR : o[:,3].astype(float),
                        LOCATION: o[:,4].astype(float)})
 
-weather = pd.DataFrame({WEATHER_ADNI: [w[:,0]],
-                        WEATHER_AP: [w[:,1]],
-                        WEATHER_ARH: [w[:,2]],
-                        WEATHER_MNDI: [w[:,3]],
-                        WEATHER_MAX_TEMP: [w[:,4]],
-                        WEATHER_MIN_TEMP: [w[:,5]],
-                        WEATHER_AVG_TEMP: [w[:,6]]})
+weather = pd.DataFrame({WEATHER_ADNI: w[:,0].flatten(),
+                        WEATHER_AP: w[:,1].flatten(),
+                        WEATHER_ARH: w[:,2].flatten(),
+                        WEATHER_MNDI: w[:,3].flatten(),
+                        WEATHER_MAX_TEMP: w[:,4].flatten(),
+                        WEATHER_MIN_TEMP: w[:,5].flatten(),
+                        WEATHER_AVG_TEMP: w[:,6].flatten()})
 
 yld = pd.DataFrame({})
 
@@ -78,6 +78,19 @@ def enrich_data(others: pd.DataFrame, genotypeMapping: np.ndarray) -> pd.DataFra
     return others
 
 others = enrich_data(others, g)
+
+# This shows how to pull out the weather data for a single location
+weatherForOneLocation = w[0,:,:]
+xaxis = np.arange(start=0, stop=len(weatherForOneLocation))
+plt.figure()
+# And this is a plot of a specific weather reading -- 5 is average temp.
+plt.plot(xaxis, weatherForOneLocation[:,4], label="min")
+plt.plot(xaxis, weatherForOneLocation[:,5], label="max")
+plt.plot(xaxis, weatherForOneLocation[:,6], label="avg")
+plt.legend()
+plt.xlabel("days in season")
+plt.ylabel("temperature")
+plt.show()
 
 states = others.groupby(by=STATE)
 #print("State counts\n{}".format(states.count()))
