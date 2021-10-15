@@ -11,6 +11,7 @@ parser.add_argument('-o', '--others', action="store", required=True, help="Other
 parser.add_argument('-w', '--weather', action="store", required=True, help="Weather")
 parser.add_argument('-y', '--yield', action="store", required=True, help="Yield", dest="yld")
 parser.add_argument('-g', '--genotype', action="store", required=True, help="Genotype Mapping")
+parser.add_argument('-c', '--csv', action="store", required=True, help="CSV file")
 
 arguments = parser.parse_args()
 
@@ -99,6 +100,24 @@ mergedData = pd.DataFrame()
 mergedData[LOCATION] = others[LOCATION]
 mergedData[YEAR] = others[YEAR]
 mergedData[YIELD] = y
+
+# Construct the merged array.  Sure there is a more elegant way to do this
+# Weather is 93K x 214 days x 7 weather attributes
+for i in range(0, 1): # We just want to do this once, so we don't need w.shape[0]):
+    for day in range(0, w.shape[1]):
+        for attribute in range(0, w.shape[2]):
+            name = "w_" + str(day) + "_" + str(attribute)
+            mergedData.insert(mergedData.shape[1],name,0)
+
+for i in range(0, w.shape[0]):
+    print("Row {}".format(i))
+    for day in range(0, w.shape[1]):
+        for attribute in range(0, w.shape[2]):
+            name = "w_" + str(day) + "_" + str(attribute)
+            #mergedData[i,day*w.shape[2] + attribute + 3] = w[i,day,attribute]
+            mergedData.iat[i,day*w.shape[2] + attribute + 3] = w[i,day,attribute]
+
+mergedData.to_csv(arguments.csv)
 
 exit(rc)
 kmeans = KMeans(n_clusters=20, random_state=0).fit(maturity[GENOTYPE])

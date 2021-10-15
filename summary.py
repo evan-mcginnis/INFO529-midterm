@@ -79,6 +79,9 @@ def enrich_data(others: pd.DataFrame, genotypeMapping: np.ndarray) -> pd.DataFra
 
 others = enrich_data(others, g)
 
+print(others.describe().transpose())
+print(weather.describe().transpose())
+
 # This shows how to pull out the weather data for a single location
 weatherForOneLocation = w[0,:,:]
 xaxis = np.arange(start=0, stop=len(weatherForOneLocation))
