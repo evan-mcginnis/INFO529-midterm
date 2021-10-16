@@ -3,16 +3,9 @@ import time
 
 
 import tensorflow as tf
-# bem add begin
-#import tensorflow.compat.v1 as tf
-
-#tf.disable_v2_behavior() 
-# replace tf.contrib with tf.compat.v1.estimator
-# As recommended here:
-# https://stackoverflow.com/questions/55870127/module-tensorflow-has-no-attribute-contrib
-# bem add end
 
 # bem additions start
+import argparse
 WEATHER = 312
 SOIL = 66
 PLANTING = 16
@@ -663,21 +656,36 @@ def main_program(X, Index,num_units,num_layers,Max_it, learning_rate, batch_size
 
 
 
-    out_te = get_sample_te(dic, mean_last, avg,np.sum(Index), time_steps=5, num_features=316+100+16+4)
+    # bem original
+    #out_te = get_sample_te(dic, mean_last, avg,np.sum(Index), time_steps=5, num_features=316+100+16+4)
+    out_te = get_sample_te(dic, mean_last, avg,np.sum(Index), time_steps=5, num_features=WEATHER + SOIL + PLANTING + MISC + 1)
 
-    Batch_X_e_te = out_te[:, :, 3:-1].reshape(-1,6*52+100+16+4)
+    # bem original
+    #Batch_X_e_te = out_te[:, :, 3:-1].reshape(-1,6*52+100+16+4)
+    # bem not sure why i need to drop this size by 4
+    Batch_X_e_te = out_te[:, :, 3:-1].reshape(-1,WEATHER + SOIL + PLANTING)
     Ybar_te = out_te[:, :, -1].reshape(-1, 5, 1)
     Batch_X_e_te = np.expand_dims(Batch_X_e_te, axis=-1)
     Batch_Y_te = out_te[:, -1, 2]
     Batch_Y_te = Batch_Y_te.reshape(len(Batch_Y_te), 1)
     Batch_Y_te2 = out_te[:, np.arange(0, 4), 2]
 
+    # bem original
+    # rmse_te,yhat1 = sess.run([RMSE,Yhat1], feed_dict={ E_t1: Batch_X_e_te[:,0:52,:],E_t2: Batch_X_e_te[:,52*1:2*52,:],E_t3: Batch_X_e_te[:,52*2:3*52,:],
+    #                                                    E_t4: Batch_X_e_te[:, 52 * 3:4 * 52, :],E_t5: Batch_X_e_te[:,52*4:5*52,:],E_t6: Batch_X_e_te[:,52*5:52*6,:],
+    #                                                    S_t1:Batch_X_e_te[:,312:322,:],S_t2:Batch_X_e_te[:,322:332,:],S_t3:Batch_X_e_te[:,332:342,:],
+    #                                                    S_t4:Batch_X_e_te[:,342:352,:],S_t5:Batch_X_e_te[:,352:362,:],S_t6:Batch_X_e_te[:,362:372,:],
+    #                                                    S_t7: Batch_X_e_te[:, 372:382, :], S_t8: Batch_X_e_te[:, 382:392, :],
+    #                                                    S_t9: Batch_X_e_te[:, 392:402, :], S_t10: Batch_X_e_te[:, 402:412, :],
+    #                                                    P_t: Batch_X_e_te[:, 412:428, :],#S_t_extra:Batch_X_e_te[:, 428:, :],
+    #                                                    Ybar:Ybar_te,Y_t: Batch_Y_te,Y_t_2: Batch_Y_te2,is_training:True,lr:learning_rate,dropout:0.0})
     rmse_te,yhat1 = sess.run([RMSE,Yhat1], feed_dict={ E_t1: Batch_X_e_te[:,0:52,:],E_t2: Batch_X_e_te[:,52*1:2*52,:],E_t3: Batch_X_e_te[:,52*2:3*52,:],
                                            E_t4: Batch_X_e_te[:, 52 * 3:4 * 52, :],E_t5: Batch_X_e_te[:,52*4:5*52,:],E_t6: Batch_X_e_te[:,52*5:52*6,:],
-                                           S_t1:Batch_X_e_te[:,312:322,:],S_t2:Batch_X_e_te[:,322:332,:],S_t3:Batch_X_e_te[:,332:342,:],
-                                           S_t4:Batch_X_e_te[:,342:352,:],S_t5:Batch_X_e_te[:,352:362,:],S_t6:Batch_X_e_te[:,362:372,:],
-                                           S_t7: Batch_X_e_te[:, 372:382, :], S_t8: Batch_X_e_te[:, 382:392, :],
-                                           S_t9: Batch_X_e_te[:, 392:402, :], S_t10: Batch_X_e_te[:, 402:412, :],P_t: Batch_X_e_te[:, 412:428, :],S_t_extra:Batch_X_e_te[:, 428:, :],
+                                           S_t1:Batch_X_e_te[:,312:323,:],S_t2:Batch_X_e_te[:,323:334,:],S_t3:Batch_X_e_te[:,334:345,:],
+                                           S_t4:Batch_X_e_te[:,345:356,:],S_t5:Batch_X_e_te[:,356:367,:],S_t6:Batch_X_e_te[:,367:378,:],
+                                           #S_t7: Batch_X_e_te[:, 372:382, :], S_t8: Batch_X_e_te[:, 382:392, :],
+                                           #S_t9: Batch_X_e_te[:, 392:402, :], S_t10: Batch_X_e_te[:, 402:412, :],
+                                           P_t: Batch_X_e_te[:, 378:394, :],#S_t_extra:Batch_X_e_te[:, 428:, :],
                                            Ybar:Ybar_te,Y_t: Batch_Y_te,Y_t_2: Batch_Y_te2,is_training:True,lr:learning_rate,dropout:0.0})
 
 
@@ -692,7 +700,18 @@ def main_program(X, Index,num_units,num_layers,Max_it, learning_rate, batch_size
 
 
 
-BigX = np.load('./corn.npz') ##order W(52*6) S(100) P(16) S_extra(4)
+# bem additions
+
+parser = argparse.ArgumentParser("Yield prediction")
+
+parser.add_argument('-d', '--data', action="store", required=True, help="Combined data")
+parser.add_argument('-i', '--iterations', action="store", required=True, type=int, help="Number of iterations")
+arguments = parser.parse_args()
+
+# bem additions end
+# bem original
+#BigX = np.load('./corn.npz') ##order W(52*6) S(100) P(16) S_extra(4)
+BigX = np.load(arguments.data) ##order W(52*6) S(100) P(16) S_extra(4)
 
 X=BigX['data']
 
@@ -739,8 +758,9 @@ l=1.0    # Weight of loss for prediction using final time step
 num_units=64  # Number of hidden units for LSTM celss
 num_layers=1  # Number of layers of LSTM cell
 
-
-rmse_tr,rmse_te,train_loss,validation_loss=main_program(X, Index,num_units,num_layers,Max_it, learning_rate, batch_size_tr,le,l)
+# bem original
+#rmse_tr,rmse_te,train_loss,validation_loss=main_program(X, Index,num_units,num_layers,Max_it, learning_rate, batch_size_tr,le,l)
+rmse_tr,rmse_te,train_loss,validation_loss=main_program(X, Index,num_units,num_layers,arguments.iterations, learning_rate, batch_size_tr,le,l)
 
 
 
