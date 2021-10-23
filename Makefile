@@ -9,13 +9,14 @@ TESTDATA=test
 TRAINDATA=train
 MODEL=model_midterm.ckpt
 
+# The number of iterations in training
 ITERATIONS=350000
 
 usage:
-	echo "No target specified. Use one of test-data or train-data"
+	echo "No target specified. Use one of test-data, train-data, train, or predict"
 
 
-data: Dataset_Competition
+data:
 	wget https://data.cyverse.org/dav-anon/iplant/home/evanmc/Dataset_Competition_Zip_File.zip
 	unzip Dataset_Competition_Zip_File.zip
 
@@ -45,3 +46,6 @@ train: $(TRAINDATA).npz
 # Predict from test data
 predictions: $(TESTDATA).npz
 	python predict-from-model.py -m $(MODEL) -d $(TESTDATA).npz
+
+all: data train-data test-data train predictions
+	@echo Complete
