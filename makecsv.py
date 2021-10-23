@@ -2,14 +2,14 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import argparse
-from sklearn.cluster import KMeans
+#from sklearn.cluster import KMeans
 import sys
 
-parser = argparse.ArgumentParser("INFO 529 Midterm head")
+parser = argparse.ArgumentParser("INFO 529 Create CSV")
 
 parser.add_argument('-o', '--others', action="store", required=True, help="Others")
 parser.add_argument('-w', '--weather', action="store", required=True, help="Weather")
-parser.add_argument('-y', '--yield', action="store", required=True, help="Yield", dest="yld")
+parser.add_argument('-y', '--yield', action="store", required=False, help="Yield -- required only for training data", dest="yld")
 parser.add_argument('-g', '--genotype', action="store", required=True, help="Genotype Mapping")
 parser.add_argument('-c', '--csv', action="store", required=True, help="CSV file")
 
@@ -27,10 +27,29 @@ def load(name: str) -> np.ndarray:
 
 o = np.load(arguments.others)
 w = np.load(arguments.weather)
-y = np.load(arguments.yld)
 g = np.load(arguments.genotype)
 
-if (o is None or w is None or y is None):
+# For the test data production, the yield would not be given
+# So this is optional.  I suppose I could introduce a 'type' so we could make this
+# conditionally optional
+
+y = None
+
+# The type of output file we are making.
+# 3 and 2 may seem arbitrary, but are used below as the number of attributes to expect
+
+TYPE_TRAINING = 3
+TYPE_TEST = 2
+TYPE = TYPE_TEST
+
+if arguments.yld is not None:
+    TYPE = TYPE_TRAINING
+    y = np.load(arguments.yld)
+    if y is None:
+        print("Failed to load data")
+        sys.exit(-1)
+
+if (o is None or w is None or g is None):
     print("Failed to load data")
     sys.exit(-1)
 
@@ -99,7 +118,10 @@ others = enrich_data(others, g)
 mergedData = pd.DataFrame()
 mergedData[LOCATION] = others[LOCATION]
 mergedData[YEAR] = others[YEAR]
-mergedData[YIELD] = y
+
+# Add in yield if it is there
+if y is not None:
+    mergedData[YIELD] = y
 
 # Construct the merged array.  Sure there is a more elegant way to do this
 # Weather is 93K x 214 days x 7 weather attributes
@@ -115,32 +137,38 @@ for i in range(0, w.shape[0]):
         for attribute in range(0, w.shape[2]):
             name = "w_" + str(day) + "_" + str(attribute)
             #mergedData[i,day*w.shape[2] + attribute + 3] = w[i,day,attribute]
-            mergedData.iat[i,day*w.shape[2] + attribute + 3] = w[i,day,attribute]
+            # If we are producing training data, there are 3 columns before the reading
+            # If we are producing test data, there are 2.  Either way, we get this from TYPE
+            mergedData.iat[i,day*w.shape[2] + attribute + TYPE] = w[i,day,attribute]
 
 mergedData.to_csv(arguments.csv)
 
 exit(rc)
-kmeans = KMeans(n_clusters=20, random_state=0).fit(maturity[GENOTYPE])
-print(kmeans.labels_)
 
-yields = []
-for entry in maturity.index:
-    yields.append(y[entry])
-
-xaxis = np.arange(start=0,stop=len(maturity[GENOTYPE]))
-plt.figure()
-plt.scatter(xaxis, maturity[GENOTYPE])
-plt.show()
-
-xaxis = np.arange(start=0,stop=len(yields))
-
-plt.figure()
-plt.plot(yields)
-plt.show()
-
-print("There are {} unique genotypes in this maturity".format(maturity.nunique()))
+# Leftover data exploration items
+# Leave these in case we need them,,,
+#
+# kmeans = KMeans(n_clusters=20, random_state=0).fit(maturity[GENOTYPE])
+# print(kmeans.labels_)
+#
+# yields = []
 # for entry in maturity.index:
-#     print(y[entry])
+#     yields.append(y[entry])
+#
+# xaxis = np.arange(start=0,stop=len(maturity[GENOTYPE]))
+# plt.figure()
+# plt.scatter(xaxis, maturity[GENOTYPE])
+# plt.show()
+#
+# xaxis = np.arange(start=0,stop=len(yields))
+#
+# plt.figure()
+# plt.plot(yields)
+# plt.show()
+#
+# print("There are {} unique genotypes in this maturity".format(maturity.nunique()))
+# # for entry in maturity.index:
+# #     print(y[entry])
 
 
 exit(rc)
