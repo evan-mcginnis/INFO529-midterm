@@ -1,0 +1,35 @@
+#
+# I N F O  5 2 9  M I D T E R M
+#
+
+This project uses these components
+make
+python 3.6
+tensorflow 1.9
+
+These instructions assume that you are familiar with setting up 
+python environments and using make
+
+How to retrieve the data:
+-------------------------
+make data
+
+This command will retrieve the data from cyverse and unzip it into the
+local directory.
+
+How to create the training data
+-------------------------------
+make train-data
+
+This command will create the training data, producing two files: train.csv and train.npz.  The train.csv file is not used during the training process.
+
+How to create the testing data
+------------------------------
+make test-data
+
+This command will create the training data, producing two files: test.csv and test.npz.  The test.csv file is not used during the prediction process.
+
+How to make predictions
+-----------------------
+make predictions
+
