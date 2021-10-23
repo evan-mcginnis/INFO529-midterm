@@ -15,7 +15,7 @@ How to retrieve the data:
 make data
 
 This command will retrieve the data from cyverse and unzip it into the
-local directory.
+local directory.  You should end up with a directory named Dataset_Competition
 
 How to create the training data
 -------------------------------
@@ -29,7 +29,18 @@ make test-data
 
 This command will create the training data, producing two files: test.csv and test.npz.  The test.csv file is not used during the prediction process.
 
+How to train the model
+----------------------
+make train
+
 How to make predictions
 -----------------------
 make predictions
+
+How to clean up everything and start from scratch
+-------------------------------------------------
+make clean
+
+Warning: This will erase all data and the trained model. Use with extreme caution.
+
 
