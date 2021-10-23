@@ -141,7 +141,8 @@ for i in range(0, w.shape[0]):
             # If we are producing test data, there are 2.  Either way, we get this from TYPE
             mergedData.iat[i,day*w.shape[2] + attribute + TYPE] = w[i,day,attribute]
 
-mergedData.to_csv(arguments.csv)
+# Avoid getting an index column in the CSV
+mergedData.to_csv(arguments.csv, index=False)
 
 exit(rc)
 
