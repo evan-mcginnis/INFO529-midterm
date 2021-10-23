@@ -11,6 +11,11 @@ MODEL=model_midterm.ckpt
 usage:
 	echo "No target specified. Use one of test-data or train-data"
 
+
+data: Dataset_Competition
+	wget https://data.cyverse.org/dav-anon/iplant/home/evanmc/Dataset_Competition_Zip_File.zip
+	unzip Dataset_Competition_Zip_File.zip
+
 # How to convert a .csv to a .npz
 %.npz: %.csv
 	python csv2npz.py -i $< -o $@
