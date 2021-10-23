@@ -8,6 +8,9 @@
 TESTDATA=test
 TRAINDATA=train
 MODEL=model_midterm.ckpt
+
+ITERATIONS=350000
+
 usage:
 	echo "No target specified. Use one of test-data or train-data"
 
@@ -34,6 +37,10 @@ $(TESTDATA).npz: $(TESTDATA).csv
 
 # Use this rule to make the test data with 'make test-data'
 test-data: $(TESTDATA).npz
+
+# This is how you train and then export the model
+train: $(TRAINDATA).npz
+	python predict-yield.py -m $(MODEL) -i $(ITERATIONS) -d $(TRAINDATA).npz
 
 # Predict from test data
 predictions: $(TESTDATA).npz
