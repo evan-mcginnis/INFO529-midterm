@@ -7,7 +7,7 @@
 # The names of the files. These can be changed
 TESTDATA=test
 TRAINDATA=train
-
+MODEL=model_midterm.ckpt
 usage:
 	echo "No target specified. Use one of test-data or train-data"
 
@@ -15,10 +15,12 @@ usage:
 %.npz: %.csv
 	python csv2npz.py -i $< -o $@
 
-train-data:
-	python makecsv.py -w "Dataset_Competition/Test Inputs/inputs_weather_test.npy" -o "Dataset_Competition/Test Inputs/inputs_others_test.npy" -g "Dataset_Competition/clusterID_genotype.npy" -o "Dataset_Competition/Test Inputs/inputs_others_test.npy" -c test.csv
-	$(TRAIN).npz
+$(TRAINDATA).csv:
+	python makecsv.py -w "Dataset_Competition/Test Inputs/inputs_weather_test.npy" -o "Dataset_Competition/Test Inputs/inputs_others_test.npy" -g "Dataset_Competition/clusterID_genotype.npy" -o "Dataset_Competition/Test Inputs/inputs_others_test.npy" -c $(TRAINDATA).csv
 
+$(TRAINDATA).npz: $(TRAINDATA).csv
+
+train-data: $(TRAINDATA).npz
 
 $(TESTDATA).csv:
 	python makecsv.py -w "Dataset_Competition/Test Inputs/inputs_weather_test.npy" -o "Dataset_Competition/Test Inputs/inputs_others_test.npy" -g "Dataset_Competition/clusterID_genotype.npy" -c $(TESTDATA).csv
@@ -27,3 +29,7 @@ $(TESTDATA).npz: $(TESTDATA).csv
 
 # Use this rule to make the test data with 'make test-data'
 test-data: $(TESTDATA).npz
+
+# Predict from test data
+predictions: $(TESTDATA).npz
+	python predict-from-model.py -m $(MODEL) -d $(TESTDATA).npz
