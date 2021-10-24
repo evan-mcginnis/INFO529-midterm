@@ -7,7 +7,7 @@
 # The names of the files. These can be changed
 TESTDATA=test
 TRAINDATA=train
-MODEL=model_midterm.ckpt
+MODEL=model_midterm
 
 # The number of iterations in training
 ITERATIONS=350000
