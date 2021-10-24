@@ -6,9 +6,10 @@ This project uses these components
 make
 python 3.6
 tensorflow 1.9
+pandas (latest is fine)
 
 These instructions assume that you are familiar with setting up 
-python environments and using make. On the HPC, the enviroment is expected called 'midterm', as scripts there refer to
+python environments and using make. On the HPC, the environment is expected called 'midterm', as scripts there refer to
 that environment
 
 How to retrieve the data:
