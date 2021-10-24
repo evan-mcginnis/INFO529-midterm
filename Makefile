@@ -19,6 +19,9 @@ usage:
 data:
 	wget https://data.cyverse.org/dav-anon/iplant/home/evanmc/Dataset_Competition_Zip_File.zip
 	unzip Dataset_Competition_Zip_File.zip
+	wget https://data.cyverse.org/dav-anon/iplant/home/evanmc/train.npz
+	wget https://data.cyverse.org/dav-anon/iplant/home/evanmc/test.npz
+
 
 # How to convert a .csv to a .npz
 %.npz: %.csv
