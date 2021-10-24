@@ -8,7 +8,8 @@ python 3.6
 tensorflow 1.9
 
 These instructions assume that you are familiar with setting up 
-python environments and using make
+python environments and using make. On the HPC, the enviroment is expected called 'midterm', as scripts there refer to
+that environment
 
 How to retrieve the data:
 -------------------------
@@ -16,26 +17,46 @@ make data
 
 This command will retrieve the data from cyverse and unzip it into the
 local directory.  You should end up with a directory named Dataset_Competition
+This will also download two data sets (in the form of NPZ files) we will use for training (train.npz) and predictions (test.npz)
+
 
 How to create the training data
 -------------------------------
 make train-data
 
 This command will create the training data, producing two files: train.csv and train.npz.  The train.csv file is not used during the training process.
+Note that this step is not required if you plan on using the data downloaded in the 'make data' step.
+Behind the scenes, this command will combine the data it finds in three sources: weather, others, genotype, and yield (found in the
+Datase_Competition directory) to create the training data.  You can load the CSV file into excel to see the data.  It's safe to
+remove that file after that step.  The CSV file is not used again.
 
 How to create the testing data
 ------------------------------
 make test-data
 
 This command will create the training data, producing two files: test.csv and test.npz.  The test.csv file is not used during the prediction process.
+Note that this step is not required if you plan on using the data downloaded in the 'make data' step
+Behind the scenes, this command will do much the same thing as in the train-data step, but this time it will not include the
+yield data. You can load the CSV file into excel to see the data.  It's safe to remove that file after that step.
+The CSV file is not used again.
 
 How to train the model
 ----------------------
 make train
 
+This will train the model on the data created or downloaded and create saved models in a few files 'model_midterm.ckpt.*'
+
+train.slurm
+This step is extremely time consuming, and is not typically something you would do interactively, but would submit a job to
+the HPC cluster.  See the train.slurm script for performing that task.
+If you submit that script with the sbatch command, the output is found in two files: train.o.<jobid> and train.e.<jobid>
+
 How to make predictions
 -----------------------
 make predictions
+
+After you have trained the model, you can make predictions from the test set using this command
+
 
 How to clean up everything and start from scratch
 -------------------------------------------------
