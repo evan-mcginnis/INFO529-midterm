@@ -49,3 +49,9 @@ predictions: $(TESTDATA).npz
 
 all: data train-data test-data train predictions
 	@echo Complete
+
+clean:
+	rm -rf Dataset_Competition
+	rm $(TRAINDATA).npz
+	rm $(TESTDATA).npz
+	rm $(MODEL).*
