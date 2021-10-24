@@ -25,7 +25,7 @@ data:
 	python csv2npz.py -i $< -o $@
 
 $(TRAINDATA).csv:
-	python makecsv.py -w "Dataset_Competition/Test Inputs/inputs_weather_test.npy" -o "Dataset_Competition/Test Inputs/inputs_others_test.npy" -g "Dataset_Competition/clusterID_genotype.npy" -o "Dataset_Competition/Test Inputs/inputs_others_test.npy" -c $(TRAINDATA).csv
+	python makecsv.py -w "Dataset_Competition/Training/inputs_weather_train.npy" -o "Dataset_Competition/Training/inputs_others_train.npy" -g "Dataset_Competition/clusterID_genotype.npy" -y "Dataset_Competition/Training/yield_train.npy" -c $(TRAINDATA).csv
 
 $(TRAINDATA).npz: $(TRAINDATA).csv
 
