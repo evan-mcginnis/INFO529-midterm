@@ -2,8 +2,8 @@
 
 
 #SBATCH --job-name=train
-#SBATCH -e train.e%A
-#SBATCH -o train.o%A
+#SBATCH -e train.e.%A
+#SBATCH -o train.o.%A
 #SBATCH --partition=windfall
 #SBATCH --ntasks=1
 #SBATCH --time=00:10:00
@@ -19,8 +19,8 @@
 ###SBATCH --mail-type=ALL
 ###SBATCH --mail-user=netid@email.arizona.edu
 
-# Warning: This script does not yet work
-#conda init bash
-#conda activate midterm
-python predict-yield.py -m model_midterm.ckpt -i 350000 -d train.npz
+conda init bash
+source ~/.bash_profile
+conda activate midterm
+python predict-yield.py -m model_midterm.ckpt -i 35000 -d train.npz
 
