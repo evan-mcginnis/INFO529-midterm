@@ -5,8 +5,8 @@
 #SBATCH -e train.e.%A
 #SBATCH -o train.o.%A
 #SBATCH --partition=windfall
-#SBATCH --ntasks=1
-#SBATCH --time=00:10:00
+#SBATCH --ntasks=16
+#SBATCH --time=03:00:00
 #SBATCH --cpus-per-task=12 
 
 # other common options. 
@@ -22,5 +22,5 @@
 conda init bash
 source ~/.bash_profile
 conda activate midterm
-python predict-yield.py -m model_midterm.ckpt -i 35000 -d train.npz
+python predict-yield.py -m model_midterm.ckpt -i 350000 -d train.npz
 
