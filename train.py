@@ -450,7 +450,7 @@ def main_program(X, Index,num_units,num_layers,Max_it, learning_rate, batch_size
             for dim in shape:
                 #   print(dim)
                 variable_parameters *= dim.value
-            # print(variable_parameters)
+            print("Variable parameters: {}".format(variable_parameters))
             total_parameters += variable_parameters
         print("total_parameters",total_parameters)
 
