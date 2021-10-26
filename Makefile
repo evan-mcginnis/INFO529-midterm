@@ -50,6 +50,9 @@ train: $(TRAINDATA).npz
 predictions: $(TESTDATA).npz
 	python predict-from-model.py -m $(MODEL) -d $(TESTDATA).npz
 
+docker: 
+	docker build -t midterm .
+
 all: data train-data test-data train predictions
 	@echo Complete
 
