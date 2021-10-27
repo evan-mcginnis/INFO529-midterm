@@ -7,6 +7,9 @@ RUN conda env create -f environment.yml
 RUN apt-get update && apt-get install -y libgtk2.0-dev && \
     rm -rf /var/lib/apt/lists/*
 
+# Make RUN commands use the new environment:
+#SHELL ["conda", "run", "-n", "midterm", "/bin/bash", "-c"]
+
 RUN /opt/conda/bin/conda update -n base -c defaults conda 
 #RUN conda config --set allow_conda_downgrades true
 #RUN conda install conda=4.6.14

@@ -8,11 +8,11 @@ set -euo pipefail
 
 # Temporarily disable strict mode and activate conda:
 set +euo pipefail
-conda activate myenv
+conda activate midterm 
 
 # Re-enable strict mode:
 set -euo pipefail
 
 # exec the final command:
-exec python predict-yield.py -d train.npz
+exec python predict-yield.py -d train.npz -i 3500 -m midterm
  
