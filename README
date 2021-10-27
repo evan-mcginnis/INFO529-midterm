@@ -6,6 +6,7 @@ This project uses these components
 make
 python 3.6
 tensorflow 1.9
+numpy 1.17
 pandas (latest is fine)
 
 These instructions assume that you are familiar with setting up 
@@ -19,6 +20,9 @@ make data
 This command will retrieve the data from cyverse and unzip it into the
 local directory.  You should end up with a directory named Dataset_Competition
 This will also download two data sets (in the form of NPZ files) we will use for training (train.npz) and predictions (test.npz)
+
+The data used in this step is stored here:
+https://de.cyverse.org/data/ds/iplant/home/evanmc?selectedOrder=asc&selectedOrderBy=name&selectedPage=0&selectedRowsPerPage=100
 
 
 How to create the training data
@@ -64,5 +68,15 @@ How to clean up everything and start from scratch
 make clean
 
 Warning: This will erase all data and the trained model. Use with extreme caution.
+
+N O T  Q U I T E  W O R K I N G
+-------------------------------
+Container can be found here:
+https://hub.docker.com/repository/docker/emcginnis/info529
+
+The container can be built with this command, however this uses docker, so cannot be executed on the HPC
+make container
+
+The entrypoint to the container is still not fully debugged, so use with caution. This is not yet fully working.
 
 
