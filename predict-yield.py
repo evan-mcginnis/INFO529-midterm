@@ -16,6 +16,7 @@ import time
 import logging
 import tensorflow as tf
 import argparse
+import sys
 
 DAYS = 214
 FIRST_YEAR = 2003 # This was 1980 in the example
@@ -276,13 +277,16 @@ def main_process(E_t1, E_t2, E_t3, E_t4, E_t5, E_t6, E_t7, Ybar, f, is_training,
 
     output, _= tf.nn.dynamic_rnn(cell, e_out, dtype=tf.float32)
 
-    print('RNN output',output)
-
+    #print('RNN output',output)
+    sys.stderr.write('RNN output {}\n'.format(output))
+    sys.stderr.flush()
 
 
     output=tf.reshape(output,shape=[-1,output.get_shape().as_list()[-1]])
 
-    print('my RNN output before FC layer',output)
+    #print('my RNN output before FC layer',output)
+    sys.stderr.write('my RNN output before FC layer {}\n'.format(output))
+    sys.stderr.flush()
     output = tf.contrib.layers.fully_connected(inputs=output, num_outputs=1, activation_fn=None,
                                                weights_initializer=tf.contrib.layers.xavier_initializer(),
                                                biases_initializer=tf.zeros_initializer())
@@ -290,13 +294,19 @@ def main_process(E_t1, E_t2, E_t3, E_t4, E_t5, E_t6, E_t7, Ybar, f, is_training,
     print(output)
 
     output = tf.reshape(output, shape=[-1,5])
-    print("output of all time steps", output)
+    #print("output of all time steps", output)
+    sys.stderr.write("output of all time steps {}\n".format(output))
+    sys.stderr.flush()
     Yhat1 = tf.gather(output, indices=[4], axis=1)
 
-    print('Yhat1', Yhat1)
+    #print('Yhat1', Yhat1)
+    sys.stderr.write("Yhat1: {}\n".format(Yhat1))
+    sys.stderr.flush()
 
     Yhat2 = tf.gather(output, indices=[0,1,2,3], axis=1)
-    print('Yhat2', Yhat2)
+    #print('Yhat2', Yhat2)
+    sys.stderr.write("Yhat2: {}\n".format(Yhat2))
+    sys.stderr.flush()
 
     return Yhat1,Yhat2
 
@@ -437,7 +447,9 @@ def main_program(X, Index,num_units,num_layers,Max_it, learning_rate, batch_size
         Yhat1,Yhat2= main_process(E_t1, E_t2, E_t3, E_t4, E_t5, E_t6, E_t7, Ybar, f, is_training, num_units, num_layers, dropout)
         Yhat1=tf.identity(Yhat1,name='Yhat1')
         # Yhat2 is the prediction we got before the final time step (year t)
-        print('Yhat1',Yhat1)
+        #print('Yhat1',Yhat1)
+        sys.stderr.write("Yhat1: {}\n".format(Yhat1))
+        sys.stderr.flush()
 
         total_parameters = 0
         for variable in tf.trainable_variables():
@@ -450,9 +462,13 @@ def main_program(X, Index,num_units,num_layers,Max_it, learning_rate, batch_size
             for dim in shape:
                 #   print(dim)
                 variable_parameters *= dim.value
-            print("Variable parameters: {}".format(variable_parameters))
+            #print("Variable parameters: {}".format(variable_parameters))
+            sys.stderr.write("Variable parameters: {}\n".format(variable_parameters))
+            sys.stderr.flush()
             total_parameters += variable_parameters
-        print("total_parameters",total_parameters)
+        #print("total_parameters",total_parameters)
+        sys.stderr.write("total_parameters: {}\n".format(total_parameters))
+        sys.stderr.flush()
 
         with tf.name_scope('loss_function'):
 
@@ -572,13 +588,19 @@ def main_program(X, Index,num_units,num_layers,Max_it, learning_rate, batch_size
 
             if i==60000:
                 learning_rate=learning_rate/2
-                print('learningrate1',learning_rate)
+                #print('learningrate1',learning_rate)
+                sys.stderr.write('learningrate1: {}\n'.format(learning_rate))
+                sys.stderr.flush()
             elif i==120000:
                 learning_rate = learning_rate/2
-                print('learningrate2', learning_rate)
+                #print('learningrate2', learning_rate)
+                sys.stderr.write('learningrate2: {}\n'.format(learning_rate))
+                sys.stderr.flush()
             elif i==180000:
                 learning_rate = learning_rate/2
-                print('learningrate3', learning_rate)
+                #print('learningrate3', learning_rate)
+                sys.stderr.write('learningrate3: {}\n'.format(learning_rate))
+                sys.stderr.flush()
 
 
             # bem: Hmm Batch_X_e is (80,394,1), so this can't really work.  No wonder it craps out on t9 below.
@@ -699,12 +721,18 @@ def main_program(X, Index,num_units,num_layers,Max_it, learning_rate, batch_size
                                            Ybar:Ybar_te,Y_t: Batch_Y_te,Y_t_2: Batch_Y_te2,is_training:True,lr:learning_rate,dropout:0.0})
 
 
-    print("The training RMSE is %f  and test RMSE is %f " % (rmse_tr, rmse_te))
+    #print("The training RMSE is %f  and test RMSE is %f " % (rmse_tr, rmse_te))
+    sys.stderr.write("The training RMSE is {}  and test RMSE is {}\n".format(rmse_tr, rmse_te))
+    sys.stderr.flush()
     t2=time.time()
 
-    print('the training time was %f' %(round(t2-t1,2)))
+    #print('the training time was %f' %(round(t2-t1,2)))
+    sys.stderr.write('the training time was {}\n'.format(round(t2-t1,2)))
+    sys.stderr.flush()
     saver = tf.train.Saver()
     #saver.save(sess, './model_corn', global_step=i)  # Saving the model
+    sys.stderr.write("Saving to {}\n".format(os.path.join(os.getcwd(), arguments.path, arguments.model + '.ckpt')))
+    sys.stderr.flush()
     saver.save(sess, os.path.join(os.getcwd(), arguments.path, arguments.model + '.ckpt'))
     #saver.save(sess, arguments.model, global_step=i)  # Saving the model
 
@@ -735,7 +763,6 @@ parser.add_argument('-wf', '--weight_final', action="store", required=False, typ
 
 arguments = parser.parse_args()
 
-import sys
 sys.stderr.write("Training")
 sys.stderr.flush()
 # Turn off annoying debug messages
@@ -767,7 +794,7 @@ Index=X[:,1]==LAST_YEAR  #validation year
 print("train data",np.sum(np.logical_not(Index)))
 print("test data",np.sum(Index))
 
-print('Std %.2f and mean %.2f  of test ' %(np.std(X[Index][:,2]),np.mean(X[Index][:,2])) , flush=true)
+print('Std %.2f and mean %.2f  of test ' %(np.std(X[Index][:,2]),np.mean(X[Index][:,2])))
 
 Max_it=350000      #150000 could also be used
 learning_rate=0.0003   # Learning rate
