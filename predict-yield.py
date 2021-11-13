@@ -705,7 +705,7 @@ def main_program(X, Index,num_units,num_layers,Max_it, learning_rate, batch_size
     print('the training time was %f' %(round(t2-t1,2)))
     saver = tf.train.Saver()
     #saver.save(sess, './model_corn', global_step=i)  # Saving the model
-    saver.save(sess, os.path.join(os.getcwd(), arguments.model + '.ckpt'))
+    saver.save(sess, os.path.join(os.getcwd(), arguments.path, arguments.model + '.ckpt'))
     #saver.save(sess, arguments.model, global_step=i)  # Saving the model
 
     return  rmse_tr,rmse_te,loss_train,loss_validation
@@ -725,6 +725,7 @@ parser = argparse.ArgumentParser("Yield prediction")
 parser.add_argument('-d', '--data', action="store", required=True, help="Combined data")
 parser.add_argument('-i', '--iterations', action="store", required=True, type=int, help="Number of iterations")
 parser.add_argument('-m', '--model', action="store", required=True, type=str, help="Model Name")
+parser.add_argument('-p', '--path', action="store", required=True, type=str, help="Model path")
 parser.add_argument('-l', '--learning', action="store", required=False, type=float, default=learning_rate, help="Learning rate")
 parser.add_argument('-b', '--batch', action="store", required=False, type=int, default=batch_size_tr, help="Batch size")
 parser.add_argument('-u', '--units', action="store", required=False, type=int, default=num_units, help="Hidden units for LSTM cells")

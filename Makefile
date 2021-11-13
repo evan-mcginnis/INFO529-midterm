@@ -8,6 +8,7 @@
 TESTDATA=test
 TRAINDATA=train
 MODEL=model_midterm
+PATH=model
 
 # The number of iterations in training
 ITERATIONS=350000
@@ -44,7 +45,7 @@ test-data: $(TESTDATA).npz
 
 # This is how you train and then export the model
 train: $(TRAINDATA).npz
-	python predict-yield.py -m $(MODEL) -i $(ITERATIONS) -d $(TRAINDATA).npz
+	python predict-yield.py -p $(PATH) -m $(MODEL) -i $(ITERATIONS) -d $(TRAINDATA).npz
 
 # Predict from test data
 predictions: $(TESTDATA).npz
