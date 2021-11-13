@@ -735,6 +735,9 @@ parser.add_argument('-wf', '--weight_final', action="store", required=False, typ
 
 arguments = parser.parse_args()
 
+import sys
+sys.stderr.write("Training")
+sys.stderr.flush()
 # Turn off annoying debug messages
 logging.getLogger("tensorflow").setLevel(logging.ERROR)
 
@@ -764,7 +767,7 @@ Index=X[:,1]==LAST_YEAR  #validation year
 print("train data",np.sum(np.logical_not(Index)))
 print("test data",np.sum(Index))
 
-print('Std %.2f and mean %.2f  of test ' %(np.std(X[Index][:,2]),np.mean(X[Index][:,2])))
+print('Std %.2f and mean %.2f  of test ' %(np.std(X[Index][:,2]),np.mean(X[Index][:,2])) , flush=true)
 
 Max_it=350000      #150000 could also be used
 learning_rate=0.0003   # Learning rate
