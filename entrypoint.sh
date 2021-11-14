@@ -1,4 +1,9 @@
 #!/bin/bash --login
+# 
+# E N T R Y P O I N T
+#
+# Entrypoint for midterm
+#
 # The --login ensures the bash configuration is loaded,
 # enabling Conda.
 
