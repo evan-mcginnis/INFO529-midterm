@@ -75,7 +75,10 @@ Container can be found here:
 https://hub.docker.com/repository/docker/emcginnis/info529
 
 The container can be built with this command, however this uses docker, so cannot be executed on the HPC
-make container
+make docker
 
-I/O out of the container is not fully worked out yet, so the model is trapped in the container for the moment.
+and then pushed to dockerhub with
+make docker-push
+ 
+
 

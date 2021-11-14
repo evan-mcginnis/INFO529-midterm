@@ -59,6 +59,11 @@ predictions: $(TESTDATA).npz
 docker: 
 	docker build -t midterm .
 
+# Super-bad form to put the password here, but we want this to go to my account
+docker-push:
+	docker login -u emcginnis -p AZj7X7jyzf9W
+	docker push emcginnis/info529:latest
+
 all: data-for-competition train-data test-data train predictions
 	@echo Complete
 
