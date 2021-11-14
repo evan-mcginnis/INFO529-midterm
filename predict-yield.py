@@ -291,7 +291,7 @@ def main_process(E_t1, E_t2, E_t3, E_t4, E_t5, E_t6, E_t7, Ybar, f, is_training,
                                                weights_initializer=tf.contrib.layers.xavier_initializer(),
                                                biases_initializer=tf.zeros_initializer())
 
-    print(output)
+    #print(output)
 
     output = tf.reshape(output, shape=[-1,5])
     #print("output of all time steps", output)
@@ -640,7 +640,7 @@ def main_program(X, Index,num_units,num_layers,Max_it, learning_rate, batch_size
                 # bem original
                 #out_te = get_sample_te(dic, mean_last, avg,np.sum(Index), time_steps=5, num_features=316+100+16+4)
                 out_te = get_sample_te(dic, mean_last, avg,np.sum(Index), time_steps=5, num_features=WEATHER + MISC + 1)
-                print(out_te.shape)
+                #print(out_te.shape)
                 Ybar_te = out_te[:, :, -1].reshape(-1, 5, 1)
                 # bem original
                 #Batch_X_e_te = out_te[:, :, 3:-1].reshape(-1,6*52+100+16+4)
@@ -688,8 +688,9 @@ def main_program(X, Index,num_units,num_layers,Max_it, learning_rate, batch_size
 
                 loss_train.append(loss_tr)
 
-                print(loss_tr,loss_val)
-                print("Iteration %d , The training RMSE is %f and Cor train is %f  and test RMSE is %f and Cor is %f " % (i, rmse_tr,rc_tr, rmse_te,rc))
+                #print(loss_tr,loss_val)
+                #print("Iteration %d , The training RMSE is %f and Cor train is %f  and test RMSE is %f and Cor is %f " % (i, rmse_tr,rc_tr, rmse_te,rc))
+                sys.stderr.write("Iteration {}, The training RMSE is {} and Cor train is {} and test RMSE is {} and Cor is {}\n ".format(i, rmse_tr,rc_tr, rmse_te,rc))
 
 
     # bem original
@@ -763,16 +764,21 @@ parser.add_argument('-wf', '--weight_final', action="store", required=False, typ
 
 arguments = parser.parse_args()
 
-sys.stderr.write("Training")
+sys.stderr.write("Yield Prediction\n")
 sys.stderr.flush()
 # Turn off annoying debug messages
 logging.getLogger("tensorflow").setLevel(logging.ERROR)
 
 #BigX = np.load('./corn.npz') ##order W(DAYS*6) S(100) P(16) S_extra(4)
+sys.stderr.write("Loading\n")
+sys.stderr.flush()
 BigX = np.load(arguments.data) ##order W(DAYS*6) S(100) P(16) S_extra(4)
+sys.stderr.write("Loaded\n")
+sys.stderr.flush()
 
 X=BigX['data']
 
+# These lines seem to mean nothing is executed afterwards in a container
 X_tr=X[X[:,1]<=2017]
 
 X_tr=X_tr[:,3:]
@@ -780,21 +786,22 @@ X_tr=X_tr[:,3:]
 M=np.mean(X_tr,axis=0,keepdims=True)
 S=np.std(X_tr,axis=0,keepdims=True)
 X[:,3:]=(X[:,3:]-M)/S
+# End problematic lines
 
 index_low_yield=X[:,2]<10
-print('low yield observations',np.sum(index_low_yield))
-print(X[index_low_yield][:,1])
+#print('low yield observations',np.sum(index_low_yield))
+#print(X[index_low_yield][:,1])
 X=np.nan_to_num(X)
 X=X[np.logical_not(index_low_yield)]
 
-del BigX
+#del BigX
 
 Index=X[:,1]==LAST_YEAR  #validation year
 
-print("train data",np.sum(np.logical_not(Index)))
-print("test data",np.sum(Index))
+#print("train data",np.sum(np.logical_not(Index)))
+#print("test data",np.sum(Index))
 
-print('Std %.2f and mean %.2f  of test ' %(np.std(X[Index][:,2]),np.mean(X[Index][:,2])))
+#print('Std %.2f and mean %.2f  of test ' %(np.std(X[Index][:,2]),np.mean(X[Index][:,2])))
 
 Max_it=350000      #150000 could also be used
 learning_rate=0.0003   # Learning rate
@@ -806,6 +813,8 @@ num_layers=1  # Number of layers of LSTM cell
 
 # bem original
 #rmse_tr,rmse_te,train_loss,validation_loss=main_program(X, Index,num_units,num_layers,Max_it, learning_rate, batch_size_tr,le,l)
+sys.stderr.write("Training\n")
+sys.stderr.flush()
 rmse_tr,rmse_te,train_loss,validation_loss=main_program(X,
                                                         Index,
                                                         arguments.units,

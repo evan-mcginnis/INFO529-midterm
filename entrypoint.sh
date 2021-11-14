@@ -14,5 +14,6 @@ conda activate midterm
 set -euo pipefail
 
 # exec the final command:
-exec python predict-yield.py -d train.npz -i 3500 -m midterm
+exec python predict-yield.py -d data/train.npz -i 350000  -p ./model -m midterm
+#exec python predict-yield.py --help 
  
