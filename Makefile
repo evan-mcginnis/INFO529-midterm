@@ -9,6 +9,7 @@ TESTDATA=test
 TRAINDATA=train
 MODEL=model_midterm
 MPATH=model
+DATADIR=./data
 
 # The number of iterations in training
 ITERATIONS=350000
@@ -17,11 +18,15 @@ usage:
 	echo "No target specified. Use one of test-data, train-data, train, or predict"
 
 
-data:
+$(DATADIR):
+	@mkdir -p $@
+
+data-for-competition: | $(DATADIR)
 	wget https://data.cyverse.org/dav-anon/iplant/home/evanmc/Dataset_Competition_Zip_File.zip
-	unzip Dataset_Competition_Zip_File.zip
-	wget https://data.cyverse.org/dav-anon/iplant/home/evanmc/train.npz
-	wget https://data.cyverse.org/dav-anon/iplant/home/evanmc/test.npz
+	# Need unkzip for cygwin to debug this on windows.
+	#unzip Dataset_Competition_Zip_File.zip
+	wget https://data.cyverse.org/dav-anon/iplant/home/evanmc/train.npz -P $(DATADIR)
+	wget https://data.cyverse.org/dav-anon/iplant/home/evanmc/test.npz -P $(DATADIR)
 
 
 # How to convert a .csv to a .npz
@@ -54,11 +59,11 @@ predictions: $(TESTDATA).npz
 docker: 
 	docker build -t midterm .
 
-all: data train-data test-data train predictions
+all: data-for-competition train-data test-data train predictions
 	@echo Complete
 
 clean:
 	rm -rf Dataset_Competition
-	rm $(TRAINDATA).npz
-	rm $(TESTDATA).npz
+	rm $(DATADIR)/$(TRAINDATA).npz
+	rm $(DATADIR)/$(TESTDATA).npz
 	rm $(MODEL).*
