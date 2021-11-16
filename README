@@ -69,16 +69,36 @@ make clean
 
 Warning: This will erase all data and the trained model. Use with extreme caution.
 
-N O T  Q U I T E  W O R K I N G
--------------------------------
+How to make a container
+-----------------------
 Container can be found here:
 https://hub.docker.com/repository/docker/emcginnis/info529
 
-The container can be built with this command, however this uses docker, so cannot be executed on the HPC
+The container can be built with this command, however this uses docker, so cannot be executed on the HPC.
+This was verified on ubuntu 20:
+
 make docker
 
 and then pushed to dockerhub with
 make docker-push
  
+To run the container on a machine with docker installed, use this command:
+docker run -v $(pwd)/model:/model -v $(pwd)/data:/data midterm -m 4000
+
+You must have previously used the 'make data-for-competition' command to make the data directory
+
+N O T  Q U I T E  W O R K I N G
+-------------------------------
+Running this on the HPC is not quite debugged at this time.  The docker container can be pulled down and converted,
+but fails early into a run.
+
+To run this on the HPC, use these steps:
+make data-for-competition
+make singularity
+singularity run -B $HOME/INFO529-midterm/data:/data info529_latest.sif
+
+To submit a job on the HPC, use this command.
+
+sbatch train-singularity.slurm
 
 
