@@ -36,8 +36,10 @@ jobs:
       - run:
           name: Run tests
           # This assumes pytest is installed via the install-package step above
-          command1: echo $DATA
           command: make data-for-competition 
+      - run:
+          name: Test Data
+          command: echo $DATA
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
